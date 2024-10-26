@@ -1,0 +1,80 @@
+C:\Users\Nolan Welsh\AppData\Local\Programs\Microsoft VS Code
+
+https://code.visualstudio.com/download
+
+worldview.earthdata.nasa.gov
+
+
+use july 12 but try other dates
+
+common error - rioxarray open up file like objects
+downloading data - that file like object becomes invalid
+
+CLFS error - to fix that rerun the results and open up the results
+into the notebooks normal circumstances
+expect 
+
+inform elsa by office hours whether I will be the only one on the call
+
+Your site description should address:
+
+Is there anything relevant to this analysis that you notice in your site map?
+Research about the context of this analysis. You could include information about the climate and history of the Denver area. How might racism, water rights, or other societal forces have influenced the distribution of urban green space in Denver? 
+Aim for a paragraph of text.
+Citations for the site data and your context sources.
+
+
+import cartopy.crs as ccrs # CRSs
+# Interactive tabular and vector data
+import hvplot.xarray # Interactive raster
+import hvplot.pandas
+# Overlay plots
+import numpy as np # Adjust images
+import xarray as xr # Adjust images
+import matplotlib.pyplot as plt #overlay plots
+#bring in the ndvi
+
+#area of interest needs to reproject to mercator
+denver_proj_aoi_gdf = denver_redlining_gdf.to_crs(ccrs.Mercator())
+#reproject ndvi to mercator
+denver_proj_ndvi_da = denver_ndvi_da.rio.reproject(ccrs.Mercator())
+#reproject bands
+denver_proj_band_dict = {
+    name: da.rio.reproject(ccrs.Mercator())
+    for name, da in band_dict.items()
+}
+
+denver_proj_ndvi_da.plot(vmin=0, robust=True)
+
+denver_proj_aoi_gdf(ax=plt.gca(), color='none')
+plt.gca().set(
+      xlabel='', ylabel='', xticks=[], yticks=[]
+ )
+
+plt.show()
+
+Function Name:
+stretch_rgb
+
+Purpose:
+The stretch_rgb function adjusts the color values of a red, green, and blue (RGB) image by applying a contrast stretch. This is done by specifying percentile thresholds for the lower and upper bounds of the pixel intensity values, which enhances the visual representation of the image, especially for data with a wide dynamic range. Additionally, the function can "brighten" the image by adding a specified value to all pixels after the stretch.
+
+Parameters:
+rgb_da (array-like): A dataset containing the red, green, and blue (RGB) bands, which have been concatenated into a single array. This is usually derived from multispectral satellite data, where each band represents a portion of the visible spectrum.
+
+low (int or float): The lower percentile threshold used to clip or stretch the values for each band. This removes values below this threshold to focus on the relevant range of intensities. A common choice is between 1–2%.
+
+high (int or float): The upper percentile threshold used to clip or stretch the values for each band. This removes values above this threshold to enhance contrast. A common choice is between 98–99%.
+
+brighten (float): A value added to all pixel intensities after the stretch to uniformly increase the brightness of the image. This value should be relatively small (e.g., 0.01 or 0.1) to avoid over-brightening the image.
+
+Returns:
+rgb_da (array-like): The adjusted RGB dataset, where pixel values have been clipped, stretched, and brightened for improved visualization. The values are constrained to the range [0, 1], suitable for display or further analysis.
+Steps:
+Percentile Calculation: The function calculates the low and high percentiles of the pixel values across the entire RGB dataset. This helps define the range of pixel intensities to be stretched.
+
+Contrast Stretching: The pixel values are normalized by subtracting the low percentile and scaling by the difference between the high and low percentiles. This improves contrast by focusing on the most significant values within the given range.
+
+Brightening: After contrast stretching, a constant brighten value is added to the dataset to uniformly increase the intensity across the image.
+
+Clipping: Finally, the pixel values are clipped to fall within the range [0, 1] to ensure that no values exceed the valid range for image display.
